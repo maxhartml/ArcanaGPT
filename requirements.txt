@@ -1,0 +1,9 @@
+# Core dependencies
+torch>=2.0.0           # PyTorch for model training
+transformers>=4.28.0   # For loading GPT-2/HuggingFace models
+tiktoken>=0.3.0        # GPT-2 tokenizer
+numpy>=1.21.0          # Numerical operations
+requests>=2.20.0       # HTTP requests (downloading HellaSwag)
+tqdm>=4.64.0           # Progress bars
+datasets>=2.0.0        # Hugging Face 'datasets' for FineWeb or other datasets
+matplotlib>=3.5.0      # For plotting/log visualisation
