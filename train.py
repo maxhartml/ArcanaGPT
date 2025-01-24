@@ -328,7 +328,7 @@ if torch.cuda.is_available():
     torch.cuda.manual_seed(1337)
     
 total_batch_size = 524288 # 2**19, ~0.5M, in number of tokens
-B = 1 # micro batch size
+B = 64 # micro batch size
 T = 1024 # sequence length
 assert total_batch_size % (B * T * ddp_world_size) == 0, "make sure total_batch_size is divisible by B * T * ddp_world_size"
 grad_accum_steps = total_batch_size // (B * T * ddp_world_size)
@@ -508,7 +508,7 @@ for step in range(max_steps):
         dist.all_reduce(loss_accum, op=dist.ReduceOp.AVG)
     norm = torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0) # clip the global norm of the graident at 1.0
     # determine and set the learning rate for this iteration
-    lr = get_lr(step)
+    lr = get_lr(step) 
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
     optimizer.step()
