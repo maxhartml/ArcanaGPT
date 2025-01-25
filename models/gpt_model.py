@@ -222,7 +222,7 @@ class GPT(nn.Module):
 
         return model
 
-    def configure_optimizers(self, weight_decay: float, learning_rate: float, device: str):
+    def configure_optimizers(self, weight_decay: float, learning_rate: float, device: str, master_process: bool):
         """
         Creates and returns an AdamW optimizer with optional fused support.
         """
@@ -241,13 +241,15 @@ class GPT(nn.Module):
         # Debug prints
         num_decay_params = sum(p.numel() for p in decay_params)
         num_nodecay_params = sum(p.numel() for p in nodecay_params)
-        print(f"Decayed param tensors: {len(decay_params)} ({num_decay_params:,} parameters)")
-        print(f"Non-decayed param tensors: {len(nodecay_params)} ({num_nodecay_params:,} parameters)")
+        if master_process:
+            print(f"Decayed param tensors: {len(decay_params)} ({num_decay_params:,} parameters)")
+            print(f"Non-decayed param tensors: {len(nodecay_params)} ({num_nodecay_params:,} parameters)")
 
         # Use fused AdamW if available
         fused_available = 'fused' in inspect.signature(torch.optim.AdamW).parameters
         use_fused = fused_available and ('cuda' in device)
-        print(f"Using fused AdamW: {use_fused}")
+        if master_process:
+            print(f"Using fused AdamW: {use_fused}")
 
         optimizer = torch.optim.AdamW(
             optim_groups,

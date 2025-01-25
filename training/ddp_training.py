@@ -84,7 +84,7 @@ def main_training_loop():
 
     # Hyperparameters
     total_batch_size = 524288  # 2**19 tokens ~ 0.5M
-    B = 64                     # micro-batch size
+    B = 8                     # micro-batch size
     T = 1024                   # sequence length
     assert total_batch_size % (B * T * ddp_world_size) == 0, \
         "Ensure total_batch_size is divisible by B*T*ddp_world_size"
@@ -93,7 +93,6 @@ def main_training_loop():
     if master_process:
         print(f"Total desired batch size: {total_batch_size}")
         print(f"Calculated gradient accumulation steps: {grad_accum_steps}")
-    print(f"I am GPU rank {ddp_rank}")
 
     # Create data loaders
     train_loader = DataLoaderLite(B=B, T=T, process_rank=ddp_rank, num_processes=ddp_world_size, split='train')
@@ -128,7 +127,7 @@ def main_training_loop():
     max_steps = 19073
 
     # Create optimiser
-    optimizer = raw_model.configure_optimizers(weight_decay=0.1, learning_rate=6e-4, device=device)
+    optimizer = raw_model.configure_optimizers(weight_decay=0.1, learning_rate=6e-4, device=device, master_process=master_process)
 
     # Logging
     log_dir = 'log'

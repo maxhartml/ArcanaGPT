@@ -30,7 +30,7 @@ class DataLoaderLite:
         self.num_processes = num_processes
         assert split in {'train', 'val'}, f"Split must be 'train' or 'val', got {split}."
 
-        data_root = "edu_fineweb10B"
+        data_root = "data/edu_fineweb10B"
         shards = os.listdir(data_root)
         shards = [s for s in shards if split in s]
         shards = sorted(shards)
